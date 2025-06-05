@@ -50,6 +50,7 @@ fun HostNavigation(
 
             TareaScreen(
                 descripcion = uiState.descripcion,
+                tiempo = uiState.tiempo, // <-- parámetro agregado
                 onTiempoChange = { viewModel.onTiempoChange(it) },
                 onDescripcionChange = { viewModel.onDescripcionChange(it) },
                 onGuardar = {
