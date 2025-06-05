@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -59,40 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-
-    //icons
-    implementation(libs.androidx.material.icons.extended)
-
-    implementation(libs.ui)
-    implementation(libs.ui.tooling)
-
-    implementation(libs.androidx.lifecycle.runtime.compose)
-
-    //navegacion
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-
-    //room
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
-    ksp(libs.androidx.room.compiler)
-
-    //  optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx)
-
-    //Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-
-    //retrofit
-    implementation(libs.retrofit)
-    implementation(libs.moshi.kotlin)
-    implementation(libs.converter.moshi)
-    implementation(libs.logging.interceptor)
-
+    implementation(libs.androidx.navigation.common.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -100,4 +68,31 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //Navegacion
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlin.serialization.json)
+    implementation(libs.material3)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    //Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.retrofit)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.converter.moshi)
+    implementation(libs.logging.interceptor)
+    configurations.all {
+        resolutionStrategy {
+            force("com.squareup:javapoet:1.13.0")
+        }
+    }
+}
+
+ksp {
+    arg("dagger.hilt.android.internal.disableAndroidSuperclassValidation", "true")
 }
