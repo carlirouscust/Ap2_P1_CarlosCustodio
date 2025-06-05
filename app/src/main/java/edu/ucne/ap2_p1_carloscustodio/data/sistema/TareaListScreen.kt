@@ -1,6 +1,5 @@
 package edu.ucne.ap2_p1_carloscustodio.data.sistema
 
-import android.icu.lang.UCharacter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items // <--- IMPORTANTE
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -32,10 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import  edu.ucne.ap2_p1_carloscustodio.data.local.entities.tareaEntity
-
-import android.icu.lang.UCharacter.NumericType
-
+import edu.ucne.ap2_p1_carloscustodio.data.local.entities.tareaEntity // <- usa tu import correcto
 
 @Composable
 fun TareaListScreen(
@@ -55,7 +52,6 @@ fun TareaListScreen(
             }
         }
     ) { paddingValues ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,7 +74,6 @@ fun TareaListScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(39.dp))
-
             LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 items(tareaList) { tarea ->
                     TareaRow(tarea = tarea, onDelete = onDelete, onEdit = onEdit)
@@ -90,15 +85,14 @@ fun TareaListScreen(
 
 @Composable
 fun TareaRow(
-    tarea: (tareaEntity),
+    tarea: tareaEntity,
     onDelete: (tareaEntity) -> Unit,
     onEdit: (tareaEntity) -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(14.dp),
         modifier = Modifier.fillMaxWidth(),
-
-        ) {
+    ) {
         Row(
             modifier = Modifier
                 .padding(22.dp)
@@ -116,7 +110,6 @@ fun TareaRow(
                     Text(text = tarea.tiempo, fontSize = 16.sp)
                 }
             }
-
             Row {
                 IconButton(onClick = { onEdit(tarea) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = Color(0xFF4CAF50))
