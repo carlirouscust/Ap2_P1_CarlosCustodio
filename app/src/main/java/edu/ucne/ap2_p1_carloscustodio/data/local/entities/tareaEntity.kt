@@ -3,10 +3,11 @@ package edu.ucne.ap2_p1_carloscustodio.data.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
 @Entity(tableName = "Tarea")
 data class tareaEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val tareaId: Int? = null,
     val descripcion: String = "",
-    val tiempo: String = ""
+    val tiempo: Int = 0
 )

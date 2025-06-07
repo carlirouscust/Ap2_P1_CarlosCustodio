@@ -1,59 +1,69 @@
 package edu.ucne.ap2_p1_carloscustodio.data.sistema
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+@Composable
+fun TareaScreen(
+    viewModel: TareaViewModel = hiltViewModel()
+
+    ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    TareaBodyScreen(
+        uiState = uiState,
+        onDescripcionChange = viewModel::onDescripcionChange,
+        onTiempoChange = viewModel::onTiempoChange,
+        onGuardar = viewModel::guardarTarea,
+        onCancelar = viewModel::cancelarEdicion
+        )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TareaScreen(
-    descripcion: String,
-    tiempo: String,
+fun TareaBodyScreen(
+    uiState: tareaUiState,
     onDescripcionChange: (String) -> Unit,
     onTiempoChange: (String) -> Unit,
     onGuardar: () -> Unit,
-    onCancel: () -> Unit,
-    editando: Boolean,
-    errorMessage: String? = null,
-    successMessage: String? = null,
-) {
+    onCancelar: () -> Unit
+
+
+    ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = if (editando) "Editar Tarea" else "Registrar Tarea",
+                        text = if (uiState.editando) "Editar Tarea" else "Registrar Tarea",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        color = colorScheme.onSurface
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorScheme.background
+                )
             )
         }
     ) { padding ->
@@ -62,7 +72,10 @@ fun TareaScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFA0A0A0), Color(0xFFF3F3F3))
+                        colors = listOf(
+                            colorScheme.surfaceVariant,
+                            colorScheme.background
+                        )
                     )
                 )
                 .padding(padding)
@@ -72,36 +85,48 @@ fun TareaScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.Black.copy(alpha = 0.95f), shape = MaterialTheme.shapes.medium)
+                    .background(
+                        color = colorScheme.surface,
+                        shape = MaterialTheme.shapes.medium
+                    )
                     .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 OutlinedTextField(
-                    value = descripcion,
-                    onValueChange = onDescripcionChange,
-                    label = { Text("Descripcion de la tarea") },
+                    value = uiState.descripcion,
+                    onValueChange = { onDescripcionChange(it) },
+                    label = { Text("Descripción de la tarea") },
                     modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorScheme.primary,
+                        unfocusedBorderColor = colorScheme.outline
+                    )
                 )
 
                 OutlinedTextField(
-                    value = tiempo,
-                    onValueChange = onTiempoChange,
+                    value = uiState.tiempo.toString(),
+                    onValueChange = { onTiempoChange(it) },
                     label = { Text("Tiempo en minutos") },
-                    modifier = Modifier.fillMaxWidth()
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorScheme.primary,
+                        unfocusedBorderColor = colorScheme.outline
+                    )
                 )
 
-                errorMessage?.let {
+                uiState.errorMessage?.let {
                     Text(
                         text = it,
-                        color = MaterialTheme.colorScheme.error,
+                        color = colorScheme.error,
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
 
-                successMessage?.let {
+                uiState.successMessage?.let {
                     Text(
                         text = it,
-                        color = Color(0xFF4CAF50),
+                        color = colorScheme.primary,
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -111,11 +136,14 @@ fun TareaScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(
-                        onClick = onCancel,
+                        onClick = onCancelar,
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336))
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF44336),
+                            contentColor = colorScheme.onError
+                        )
                     ) {
                         Text("Cancelar")
                     }
@@ -124,10 +152,14 @@ fun TareaScreen(
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50),
+                            contentColor = colorScheme.onPrimary
+                        )
                     ) {
                         Text("Guardar")
                     }
+
                 }
             }
         }
