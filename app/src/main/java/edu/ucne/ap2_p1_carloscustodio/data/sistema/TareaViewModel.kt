@@ -37,7 +37,8 @@ class TareaViewModel @Inject constructor(
     }
 
     fun onTiempoChange(newValue: String) {
-        _uiState.update { it.copy(tiempo = newValue) }
+        val tiempoInt = newValue.toIntOrNull() ?: 0
+        _uiState.update { it.copy(tiempo = tiempoInt) }
     }
 
     fun editarTarea(tarea: tareaEntity) {
@@ -56,7 +57,7 @@ class TareaViewModel @Inject constructor(
         val state = _uiState.value
 
 
-        if (state.descripcion.isBlank() || state.tiempo.isBlank()) {
+        if (state.descripcion.isBlank() || state.tiempo <= 0) {
             _uiState.update { it.copy(errorMessage = "Todos los campos deben estar llenos.", successMessage = null) }
             return
         }
@@ -72,7 +73,7 @@ class TareaViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         descripcion = "",
-                        tiempo = "",
+                        tiempo = 0,
                         tareaEditandaId = null,
                         errorMessage = null,
                         successMessage = "Tarea actualizada con éxito"
@@ -91,7 +92,7 @@ class TareaViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         descripcion = "",
-                        tiempo = "",
+                        tiempo = 0,
                         errorMessage = null,
                         successMessage = "Tiempo guardado con éxito"
                     )
@@ -104,7 +105,7 @@ class TareaViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 descripcion = "",
-                tiempo = "",
+                tiempo = 0,
                 errorMessage = null,
                 successMessage = null
             )
